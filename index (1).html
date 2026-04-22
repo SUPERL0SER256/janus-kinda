@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE JANUS SYSTEM — Design Evaluation</title>
+    <link rel="stylesheet" href="style.css">
+     <link rel="icon" type="image/x-icon" href="/assets/janus system logo.png">
+</head>
+<body>
+
+<nav class="nav">
+    <div class="logo" onclick="show('p1')">
+       <img class="logo-badge" src="assets/janus system logo.png" alt="Janus logo" /> 
+        <span class="logo-text">THE JANUS SYSTEM</span>
+    </div>
+    <div class="nav-pills">
+        <button class="npill on" id="np-p1" onclick="show('p1')">1 · Hero</button>
+        <button class="npill" id="np-p12" onclick="show('p12')">1.2 · Create</button>
+        <button class="npill" id="np-p21" onclick="show('p21')">2.1 · Enter</button>
+        <button class="npill" id="np-p22" onclick="show('p22')">2.2 · Compare</button>
+        <button class="npill" id="np-p24" onclick="show('p24')">2.4 · Done</button>
+        <button class="npill" id="np-p13" onclick="show('p13')">1.3 · Responses</button>
+        <button class="npill" id="np-p14" onclick="show('p14')">1.4 · Results</button>
+    </div>
+</nav>
+
+<div class="page on" id="p1">
+    <div class="hero-split">
+        <div class="hero-l">
+            <div class="eyebrow">Design evaluation</div>
+            <h1 class="hero-h">Rank your best<br>iteration.<br>Through real ratings.</h1>
+            <p class="hero-desc">The Janus System uses pairwise A/B voting and the Elo rating system to surface your strongest design — no surveys, no bias, just choices.</p>
+            <div class="hero-cta">
+                <button class="btn-ink" onclick="show('p12')">Create a system</button>
+            </div>
+            <div class="hero-stats">
+                <div class="hstat"><div class="hstat-n">A/B</div><div class="hstat-l">Always binary</div></div>
+                <div class="hstat"><div class="hstat-n">Elo</div><div class="hstat-l">Chess-style rating</div></div>
+                <div class="hstat"><div class="hstat-n">30</div><div class="hstat-l">Max images</div></div>
+            </div>
+        </div>
+        <div class="hero-r">
+            <div class="demo-lbl">Click a card to try</div>
+            <div class="demo-ab" style="position:relative">
+                <div class="dc" id="dc-a" onclick="demoPick('a')"><div class="dc-letter">A</div><div class="dc-tag" id="dt-a">Option A</div></div>
+                <div class="dc" id="dc-b" onclick="demoPick('b')"><div class="dc-letter">B</div><div class="dc-tag" id="dt-b">Option B</div></div>
+                <div class="demo-vs">VS</div>
+            </div>
+            <div class="demo-elo">
+                <div class="elo-bars">
+                    <div class="elo-bar"><div class="elo-fill" id="ef-a" style="width:50%"></div></div>
+                    <div class="elo-bar"><div class="elo-fill" id="ef-b" style="width:50%"></div></div>
+                </div>
+                <div class="elo-nums"><span>A — <strong id="en-a">1500</strong></span><span>B — <strong id="en-b">1500</strong></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page" id="p12">
+    <div class="wrap">
+        <div class="eyebrow">New session</div>
+        <div class="pg-title">Create a system</div>
+        <div class="frow">
+            <div class="field"><label>System title</label><input type="text" id="s-title" placeholder="e.g. App icon — round 3" /></div>
+            <div class="field"><label>Creator name</label><input type="text" id="s-creator" placeholder="Your name or team" /></div>
+        </div>
+        <div class="field"><label>Brief for evaluators</label><textarea id="s-brief" placeholder="What should evaluators focus on?"></textarea></div>
+        <div class="divider"></div>
+        <div class="upload-zone" id="uz" onclick="document.getElementById('fi').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="event.preventDefault();this.classList.remove('drag');handleDrop(event)">
+            <div class="uz-icon"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 12V3M9 3L6 6M9 3L12 6" stroke="#0a0a0a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 13v1a2 2 0 002 2h10a2 2 0 002-2v-1" stroke="#0a0a0a" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+            <div class="uz-title">Drop images here</div>
+            <div class="uz-sub">PNG · JPG · WEBP — min 2, max 30</div>
+            <div class="uz-btn" onclick="event.stopPropagation();document.getElementById('fi').click()">Browse folder</div>
+            <input type="file" id="fi" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)" />
+        </div>
+        <div class="count-row">
+            <span class="count-lbl">Variants loaded</span>
+            <span class="count-val"><span id="vc">0</span> images · ~<span id="pc">0</span> comparisons per person</span>
+        </div>
+        <div class="thumb-grid" id="tg"></div>
+        <div class="gen-row">
+            <button class="btn-ink" id="gbtn" onclick="genLink()" disabled>Generate link</button>
+            <span class="gen-hint" id="ghint">Upload at least 2 images</span>
+        </div>
+        <div class="link-box" id="lb">
+            <div class="lb-top">
+                <div class="lb-lbl"><div class="ldot"></div>Session live</div>
+                <div class="lb-btns">
+                    <button class="smbtn" id="cpbtn" onclick="copyLnk()">Copy link</button>
+                    <button class="smbtn" onclick="show('p21')">Preview evaluator →</button>
+                </div>
+            </div>
+            <div class="lb-url" id="lburl"></div>
+            <div class="lb-meta">
+                <div class="lbm"><span class="lbm-n" id="ls-v">0</span><span class="lbm-l">Images</span></div>
+                <div class="lbm"><span class="lbm-n" id="ls-c">0</span><span class="lbm-l">Comparisons/person</span></div>
+                <div class="lbm"><span class="lbm-n" id="ls-s">~10</span><span class="lbm-l">People for stability</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page" id="p21">
+    <div class="wrap" style="max-width:480px">
+        <div class="session-card">
+            <div class="sc-top">
+                <div class="sc-id">Session · JNS-2847</div>
+                <div class="sc-title" id="entry-title">App icon — round 3</div>
+                <div class="sc-creator" id="entry-creator">by Studio Halverson</div>
+            </div>
+            <div class="sc-body">
+                <div class="sc-brief" id="entry-brief">Pick the icon that feels most distinct and recognisable at small sizes. Focus on clarity, not personal preference.</div>
+                <div class="sc-stats">
+                    <div class="sc-stat"><span class="sc-stat-n" id="entry-imgs">0</span><span class="sc-stat-l">Variants</span></div>
+                    <div class="sc-stat"><span class="sc-stat-n" id="entry-comps">0</span><span class="sc-stat-l">Comparisons</span></div>
+                    <div class="sc-stat"><span class="sc-stat-n" id="entry-resps">0</span><span class="sc-stat-l">Responses so far</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="name-row">
+            <input class="name-inp" id="eval-name" type="text" placeholder="Your name" />
+            <div class="anon" onclick="toggleAnon()"><div class="abox" id="abox"><div class="acheck"></div></div>Anonymous</div>
+        </div>
+        <button class="btn-ink" id="start-btn" style="width:100%;padding:13px;font-size:12px">Start comparing →</button>
+    </div>
+</div>
+
+<div class="page" id="p22">
+    <div class="wrap">
+        <div class="cmp-hd">
+            <span class="cmp-sess" id="cmp-title">Session</span>
+            <div class="prog-wrap">
+                <div class="prog-track"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+                <div class="prog-lbl" id="prog-lbl">0 of 0</div>
+            </div>
+            <button class="btn-ghost" style="padding:6px 12px;font-size:10px" onclick="nextCmp()">Skip</button>
+        </div>
+        <div class="cmp-instr">Choose the stronger design</div>
+        <div class="ab-arena">
+            <div class="ab-card" id="ca" onclick="pickCard('a')">
+                <div class="ab-img" id="img-a"><div class="ab-badge">Selected</div></div>
+                <div class="ab-foot"><span class="ab-lbl" id="lbl-a">—</span><span class="ab-elo" id="elo-a-disp">1500</span></div>
+            </div>
+            <div class="ab-card" id="cb" onclick="pickCard('b')">
+                <div class="ab-img" id="img-b"><div class="ab-badge">Selected</div></div>
+                <div class="ab-foot"><span class="ab-lbl" id="lbl-b">—</span><span class="ab-elo" id="elo-b-disp">1500</span></div>
+            </div>
+        </div>
+        <div class="elo-panel">
+            <div class="ep-side"><div class="ep-id" id="ep-a">—</div><div class="ep-score" id="es-a">1500</div><div class="ep-delta" id="ed-a"></div></div>
+            <div class="ep-mid">ELO<br>LIVE</div>
+            <div class="ep-side" style="text-align:right"><div class="ep-id" id="ep-b">—</div><div class="ep-score" id="es-b">1500</div><div class="ep-delta" id="ed-b" style="text-align:right"></div></div>
+        </div>
+        <div class="convergence-bar">
+            <span class="conv-lbl">Convergence</span>
+            <div class="conv-track"><div class="conv-fill" id="conv-fill" style="width:0%"></div></div>
+            <span class="conv-lbl" id="conv-pct">0%</span>
+        </div>
+        <button class="next-btn" id="nbtn" onclick="nextCmp()">Next →</button>
+    </div>
+</div>
+
+<div class="page" id="p24">
+    <div class="wrap">
+        <div class="done-center">
+            <div class="done-mark"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="#0a0a0a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="done-title">Response recorded.</div>
+            <p class="done-sub">Your comparisons have been added to the global pool. Every vote shifts the Elo scores — the ranking gets sharper with each new response.</p>
+            <div class="done-stats">
+                <div class="dst"><span class="dst-n" id="done-comps">0</span><span class="dst-l">Comparisons made</span></div>
+                <div class="dst"><span class="dst-n" id="done-resps">0</span><span class="dst-l">Total responses</span></div>
+            </div>
+            <button class="btn-ink" onclick="show('p14')">View live rankings →</button>
+        </div>
+    </div>
+</div>
+
+<div class="page" id="p13">
+    <div class="wrap">
+        <div class="eyebrow">Creator view</div>
+        <div class="pg-title">Responses</div>
+        <div class="meta-row">
+            <div class="mc"><span class="mc-n" id="rm-resps">0</span><span class="mc-l">Responses</span></div>
+            <div class="mc"><span class="mc-n" id="rm-comps">0</span><span class="mc-l">Comparisons</span></div>
+            <div class="mc"><span class="mc-n" id="rm-imgs">0</span><span class="mc-l">Images</span></div>
+            <div class="mc"><span class="mc-n" id="rm-cpe">0</span><span class="mc-l">Comp. each</span></div>
+        </div>
+        <div id="resp-body"></div>
+    </div>
+</div>
+
+<div class="page" id="p14">
+    <div class="wrap">
+        <div class="eyebrow">Live leaderboard</div>
+        <div class="pg-title">Rankings</div>
+        <div class="meta-row" style="margin-bottom:20px">
+            <div class="mc"><span class="mc-n" id="res-resps">0</span><span class="mc-l">Responses</span></div>
+            <div class="mc"><span class="mc-n" id="res-comps">0</span><span class="mc-l">Comparisons</span></div>
+            <div class="mc"><span class="mc-n" id="res-imgs">0</span><span class="mc-l">Images</span></div>
+            <div class="mc"><span class="mc-n" id="res-top">—</span><span class="mc-l">Top Elo</span></div>
+        </div>
+        <div class="rank-list" id="rl"></div>
+        <div class="stability-note" id="stab-note"></div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
